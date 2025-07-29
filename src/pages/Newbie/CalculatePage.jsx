@@ -85,7 +85,7 @@ const CalculatePage = () => {
                 label="Years"
                 name="yearsToAchieve"
                 aria-label="Years to Achieve"
-                maxValue={50}
+                maxValue={40}
                 minValue={1}
                 step={1}
                 onChange={(value) =>
