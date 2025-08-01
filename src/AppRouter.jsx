@@ -1,19 +1,15 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import Type1Page from "./pages/Newbie/Type1Page";
-import Type2Page from "./pages/Newbie/Type2Page";
-import Type3Page from "./pages/Newbie/Type3Page";
-import CalculatePage from "./pages/Newbie/CalculatePage";
+import CalculatePage from "./pages/CalculatePage";
+import Recommendations from "./pages/Recommendations";
 
 const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/newbie" element={<Type1Page />} />
-      <Route path="/intermediate" element={<Type2Page />} />
-      <Route path="/expert" element={<Type3Page />} />
-      <Route path="/newbie/calculate/:goal" element={<CalculatePage  />} />
+      <Route path="/input" element={<CalculatePage />} />
+      <Route path="/recommendations" element={<Recommendations />} />
     </Routes>
   );
 };
