@@ -31,25 +31,9 @@ const HomePage = () => {
           variant="ghost"
           color="primary"
           className="w-80 h-12 text-base font-semibold"
-          onPress={() => navigate("/newbie")}
+          onPress={() => navigate("/input")}
         >
-          I am new to Investing 😊
-        </Button>
-        <Button
-          variant="ghost"
-          color="primary"
-          className="w-80 h-12 text-base font-semibold"
-          onPress={() => navigate("/intermediate")}
-        >
-          I am an intermediate Investor 💰
-        </Button>
-        <Button
-          variant="ghost"
-          color="primary"
-          className="w-80 h-12 text-base font-semibold"
-          onPress={() => navigate("/expert")}
-        >
-          I am an expert Trader 📈
+          Let's get started 😉
         </Button>
       </div>
     </div>
