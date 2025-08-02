@@ -27,7 +27,7 @@ const Recommendations = () => {
     } else {
       console.warn("⚠️ No recommendations data found");
       // Redirect back to calculate page
-      navigate("/calculate");
+      navigate("/input");
     }
   }, [location.state, navigate]);
 
@@ -180,7 +180,7 @@ const Recommendations = () => {
         {/* Navigation and PDF Download */}
         <div className="text-center space-y-4">
           <button
-            onClick={() => navigate("/calculate")}
+            onClick={() => navigate("/input")}
             className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
           >
             Back to Calculator
