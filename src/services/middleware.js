@@ -1,19 +1,22 @@
 import axios from "axios";
 import api from "./api";
 
+export const getTaskResult = async (task_id) => {
+  return await api.get(`/getTaskResult/${task_id}`);
+};
+
 const API_BASE_URL = "http://127.0.0.1:5000";
 
 export const sendUserInputs = async (userInputs) => {
   try {
-    // Start the processing
     const response = await api.post("/startTask", {
       user_inputs: userInputs,
     });
     console.log("🔄 Task started:", response.data);
 
     const taskId = response.data.task_id;
-
-    // Poll for results
+    localStorage.setItem("task_id", taskId);
+    
     return await pollForResult(taskId);
   } catch (error) {
     console.error("❌ Error starting task:", error);
