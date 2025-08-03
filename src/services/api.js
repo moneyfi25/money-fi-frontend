@@ -1,7 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:5000",
+  // baseURL: "http://127.0.0.1:5000",
+  baseURL: "https://money-fi-9702ab6d8daf.herokuapp.com",
+  // baseURL: "https://moneyfi.onrender.com",
+
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
