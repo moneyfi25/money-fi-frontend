@@ -134,7 +134,7 @@ const HomePage = () => {
           <Button
             color="primary"
             className="mt-2 w-full md:w-2/3 h-14 text-lg font-bold rounded-2xl shadow-xl transition-all hover:-translate-y-1 hover:shadow-2xl hover:bg-primary/90 focus:ring-2 focus:ring-primary/60"
-            onPress={() => navigate("/input")}
+            onPress={() => navigate("/calculate")}
           >
             <span className="flex items-center gap-2">
               Start Investing
