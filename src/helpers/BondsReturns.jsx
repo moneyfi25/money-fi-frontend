@@ -27,7 +27,7 @@ ChartJS.register(
 function BondsReturns({ bonds }) {
   // Data for Bar Chart (YTM)
   const barData = {
-    labels: bonds.map((bond) => bond.name.split(' ').slice(0, 2).join(' ')), // Truncate long names
+    labels: bonds.map((bond) => bond.name.split(" ").slice(0, 2).join(" ")), // Truncate long names
     datasets: [
       {
         label: "Yield to Maturity (%)",
@@ -42,7 +42,7 @@ function BondsReturns({ bonds }) {
 
   // Data for Line Chart (Coupon Rates)
   const lineData = {
-    labels: bonds.map((bond) => bond.name.split(' ').slice(0, 2).join(' ')),
+    labels: bonds.map((bond) => bond.name.split(" ").slice(0, 2).join(" ")),
     datasets: [
       {
         label: "Coupon Rate (%)",
@@ -76,11 +76,15 @@ function BondsReturns({ bonds }) {
   };
 
   // Data for Doughnut Chart (Bond Types)
-  const govBonds = bonds.filter(bond => bond.name.includes('Government Security')).length;
-  const corpBonds = bonds.filter(bond => bond.name.includes('Corporate Bond')).length;
-  
+  const govBonds = bonds.filter((bond) =>
+    bond.name.includes("Government Security")
+  ).length;
+  const corpBonds = bonds.filter((bond) =>
+    bond.name.includes("Corporate Bond")
+  ).length;
+
   const doughnutData = {
-    labels: ['Government Securities', 'Corporate Bonds'],
+    labels: ["Government Securities", "Corporate Bonds"],
     datasets: [
       {
         data: [govBonds, corpBonds],
@@ -147,8 +151,8 @@ function BondsReturns({ bonds }) {
             size: 11,
             family: "'Inter', sans-serif",
           },
-          callback: function(value) {
-            return value + '%';
+          callback: function (value) {
+            return value + "%";
           },
         },
       },
@@ -181,8 +185,8 @@ function BondsReturns({ bonds }) {
             size: 11,
             family: "'Inter', sans-serif",
           },
-          callback: function(value) {
-            return value + '%';
+          callback: function (value) {
+            return value + "%";
           },
         },
       },
@@ -233,17 +237,17 @@ function BondsReturns({ bonds }) {
             <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
           </div>
           <div className="h-64 md:h-80">
-            <Doughnut 
-              data={doughnutData} 
+            <Doughnut
+              data={doughnutData}
               options={{
                 ...chartOptions,
-                cutout: '60%',
+                cutout: "60%",
                 plugins: {
                   ...chartOptions.plugins,
                   tooltip: {
                     ...chartOptions.plugins.tooltip,
                     callbacks: {
-                      label: function(context) {
+                      label: function (context) {
                         const label = context.label;
                         const value = context.parsed;
                         const total = govBonds + corpBonds;
@@ -253,7 +257,7 @@ function BondsReturns({ bonds }) {
                     },
                   },
                 },
-              }} 
+              }}
             />
           </div>
         </div>
@@ -275,25 +279,36 @@ function BondsReturns({ bonds }) {
       {/* Bond Details Table */}
       <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-4 md:p-6 hover:shadow-md transition-shadow duration-200">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Bond Details
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-800">Bond Details</h3>
           <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-2 font-semibold text-gray-700">Bond Name</th>
-                <th className="text-right py-3 px-2 font-semibold text-gray-700">YTM</th>
-                <th className="text-right py-3 px-2 font-semibold text-gray-700">Coupon Rate</th>
-                <th className="text-right py-3 px-2 font-semibold text-gray-700">Maturity</th>
-                <th className="text-right py-3 px-2 font-semibold text-gray-700">Years Left</th>
+                <th className="text-left py-3 px-2 font-semibold text-gray-700">
+                  Bond Name
+                </th>
+                <th className="text-right py-3 px-2 font-semibold text-gray-700">
+                  YTM
+                </th>
+                <th className="text-right py-3 px-2 font-semibold text-gray-700">
+                  Coupon Rate
+                </th>
+                <th className="text-right py-3 px-2 font-semibold text-gray-700">
+                  Maturity
+                </th>
+                <th className="text-right py-3 px-2 font-semibold text-gray-700">
+                  Years Left
+                </th>
               </tr>
             </thead>
             <tbody>
               {bonds.map((bond, index) => (
-                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr
+                  key={index}
+                  className="border-b border-gray-100 hover:bg-gray-50"
+                >
                   <td className="py-3 px-2 font-medium text-gray-800">
                     {bond.name}
                   </td>
@@ -326,22 +341,37 @@ function BondsReturns({ bonds }) {
         </div>
         <div className="space-y-3">
           {bonds
-            .sort((a, b) => new Date(a.maturity_date) - new Date(b.maturity_date))
+            .sort(
+              (a, b) => new Date(a.maturity_date) - new Date(b.maturity_date)
+            )
             .map((bond, index) => {
               const yearsLeft = getYearsToMaturity(bond.maturity_date);
-              const isGov = bond.name.includes('Government Security');
-              
+              const isGov = bond.name.includes("Government Security");
+
               return (
-                <div key={index} className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
+                <div
+                  key={index}
+                  className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg"
+                >
                   <div className="flex items-center space-x-3">
-                    <div className={`w-4 h-4 rounded-full ${isGov ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
+                    <div
+                      className={`w-4 h-4 rounded-full ${
+                        isGov ? "bg-emerald-500" : "bg-red-500"
+                      }`}
+                    ></div>
                     <div>
-                      <p className="text-sm font-medium text-gray-800">{bond.name}</p>
-                      <p className="text-xs text-gray-600">{bond.maturity_date}</p>
+                      <p className="text-sm font-medium text-gray-800">
+                        {bond.name}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {bond.maturity_date}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-purple-600">{yearsLeft} years</p>
+                    <p className="text-sm font-semibold text-purple-600">
+                      {yearsLeft} years
+                    </p>
                     <p className="text-xs text-gray-500">{bond.ytm}% YTM</p>
                   </div>
                 </div>
@@ -357,26 +387,35 @@ function BondsReturns({ bonds }) {
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
-            <p className="text-2xl font-bold text-indigo-600">
-              {bonds.length}
-            </p>
+            <p className="text-2xl font-bold text-indigo-600">{bonds.length}</p>
             <p className="text-sm text-gray-600">Total Bonds</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-green-600">
-              {(bonds.reduce((sum, bond) => sum + bond.ytm, 0) / bonds.length).toFixed(2)}%
+              {(
+                bonds.reduce((sum, bond) => sum + bond.ytm, 0) / bonds.length
+              ).toFixed(2)}
+              %
             </p>
             <p className="text-sm text-gray-600">Avg. YTM</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-amber-600">
-              {(bonds.reduce((sum, bond) => sum + bond.coupon_rate, 0) / bonds.length).toFixed(2)}%
+              {(
+                bonds.reduce((sum, bond) => sum + bond.coupon_rate, 0) /
+                bonds.length
+              ).toFixed(2)}
+              %
             </p>
             <p className="text-sm text-gray-600">Avg. Coupon</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-purple-600">
-              {Math.max(...bonds.map(bond => parseFloat(getYearsToMaturity(bond.maturity_date)))).toFixed(1)}
+              {Math.max(
+                ...bonds.map((bond) =>
+                  parseFloat(getYearsToMaturity(bond.maturity_date))
+                )
+              ).toFixed(1)}
             </p>
             <p className="text-sm text-gray-600">Max Maturity (yrs)</p>
           </div>
@@ -384,6 +423,6 @@ function BondsReturns({ bonds }) {
       </div>
     </div>
   );
-}
+};
 
 export default BondsReturns;
