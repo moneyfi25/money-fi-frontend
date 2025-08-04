@@ -1,12 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
+import { getTaskResult } from "../services/middleware";
 
 const Recommendations = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
+
+  const showReport = async () => {
+    try {
+      const task_id = localStorage.getItem("task_id");
+      if (!task_id) {
+        console.error("❌ Task ID not found in local storage");
+        return;
+      }
+
+      const response = await getTaskResult(task_id);
+
+      if (response && response.data) {
+        console.log(
+          "📄 Navigating to InvestmentReport with data:",
+          response.data
+        );
+        navigate("/investment-report", {
+          state: { reportData: response.data },
+        });
+      } else {
+        console.error("❌ No data found in response");
+      }
+    } catch (error) {
+      console.error("❌ Error fetching task result:", error);
+    }
+  };
 
   useEffect(() => {
     // Get data from navigation state or localStorage
@@ -186,7 +213,7 @@ const Recommendations = () => {
             Back to Calculator
           </button>
           <button
-            onClick={generatePDF}
+            onClick={showReport}
             className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition duration-200"
           >
             Download PDF
