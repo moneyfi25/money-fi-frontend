@@ -232,30 +232,48 @@ const CalculatePage = () => {
             </FieldCard>
 
             <FieldCard label="How much can you invest monthly?" icon={<BarChart size={20}/>}>
-              <NumberInput
-                className="w-full mt-2 dark:text-white"
-                variant="bordered"
-                hideStepper
-                placeholder="10,000"
-                name="monthlyInvestment"
-                aria-label="Monthly Investment"
-                value={formData.monthlyInvestment}
-                onChange={value => setFormData(prev => ({ ...prev, monthlyInvestment: value }))}
-              />
-            </FieldCard>
+            <NumberInput
+              className="w-full mt-2 dark:text-white"
+              variant="bordered"
+              hideStepper
+              placeholder="10,000"
+              name="monthlyInvestment"
+              aria-label="Monthly Investment"
+              value={formData.monthlyInvestment}
+              min={0}
+              onChange={value => {
+                const numValue = Number(String(value).replace(/,/g, ""));
+                if (!isNaN(numValue) && numValue >= 0) {
+                  setFormData(prev => ({
+                    ...prev,
+                    monthlyInvestment: numValue
+                  }));
+                }
+              }}
+            />
+          </FieldCard>
 
             <FieldCard label="What is your age?" icon={<User size={20}/>}>
-              <NumberInput
-                className="w-full mt-2 dark:text-white"
-                variant="bordered"
-                hideStepper
-                placeholder="25"
-                name="age"
-                aria-label="Age"
-                value={formData.age}
-                onChange={value => setFormData(prev => ({ ...prev, age: value }))}
-              />
-            </FieldCard>
+            <NumberInput
+              className="w-full mt-2 dark:text-white"
+              variant="bordered"
+              hideStepper
+              placeholder="25"
+              name="age"
+              aria-label="Age"
+              value={formData.age}
+              min={0}
+              onChange={value => {
+                const numValue = Number(String(value).replace(/,/g, ""));
+                if (!isNaN(numValue) && numValue >= 0) {
+                  setFormData(prev => ({
+                    ...prev,
+                    age: numValue
+                  }));
+                }
+              }}
+            />
+          </FieldCard>
 
             <FieldCard label="In how many years do you want to achieve your goal?" icon={<Calendar size={20}/>}>
               <Slider
