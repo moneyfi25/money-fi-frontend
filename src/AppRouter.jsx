@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import CalculatePage from "./pages/CalculatePage";
 import Recommendations from "./pages/Recommendations";
 import InvestmentReportPage from "./pages/InvestmentReport";
+import StratergyPage from "./pages/StratergyPage";
 
 const AppRouter = () => {
   return (
@@ -12,6 +13,7 @@ const AppRouter = () => {
       <Route path="/calculate" element={<CalculatePage />} />
       <Route path="/recommendations" element={<Recommendations />} />
       <Route path="/investment-report" element={<InvestmentReportPage />} />
+      <Route path="/stratergies" element={<StratergyPage />} />
     </Routes>
   );
 };
