@@ -106,7 +106,6 @@ const HomePage = () => {
                 deleteSpeed={40}
                 delaySpeed={1600}
                 onLoopDone={() => setCurrentIndex(0)}
-                onType={(char, { type, cursor, wordIndex }) => setCurrentIndex(wordIndex)}
               />
             </h1>
           </div>
