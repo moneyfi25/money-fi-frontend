@@ -1,10 +1,10 @@
 import React from "react";
 import AllocationPie from "../helpers/AllocationPie";
-import MutualFundReturns from "../helpers/MutualFundReturns";
 import ETFReturns from "../helpers/ETFReturns";
-import BondsReturns from "../helpers/Bondsreturns";
+import MutualFundReturns from "../helpers/MutualFundReturns";
 import ExportToPDF from "../helpers/ExportToPDF";
 import { useLocation } from "react-router-dom";
+import BondsReturns from "../helpers/BondsReturns";
 
 export default function InvestmentReportPage() {
   const location = useLocation();
