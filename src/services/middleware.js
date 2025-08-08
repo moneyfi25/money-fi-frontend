@@ -5,8 +5,16 @@ export const getTaskResult = async (task_id) => {
   return await api.get(`/getTaskResult/${task_id}`);
 };
 
-// const API_BASE_URL = "https://money-fi-9702ab6d8daf.herokuapp.com";
-const API_BASE_URL = "http://127.0.0.1:5000";
+export const getStratergy = async (formData) => {
+  return await api.post("/getStratergy", formData);
+}
+
+export const getReportByType = async (type) => {
+  return await api.get(`/getReportByType/${type}`);
+};
+
+const API_BASE_URL = "https://money-fi-9702ab6d8daf.herokuapp.com";
+// const API_BASE_URL = "http://127.0.0.1:5000";
 // const API_BASE_URL = "https://moneyfi.onrender.com";
 
 export const sendUserInputs = async (userInputs) => {
@@ -42,7 +50,7 @@ const pollForResult = async (taskId, maxAttempts = 30, interval = 10000) => {
       if (response.data.status === "completed") {
         console.log("✅ Task completed successfully!");
         console.log("🎯 Final result:", response.data.result);
-        return response.data;
+        return response.data.result;
       } else if (response.data.status === "error") {
         console.error("❌ Task failed:", response.data.error);
         throw new Error(response.data.error);
