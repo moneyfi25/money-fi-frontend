@@ -3,7 +3,6 @@ import { Button } from "@heroui/button";
 import { useNavigate } from "react-router-dom";
 import { NumberInput, Slider, Select, SelectItem } from "@heroui/react";
 import { Form } from "@heroui/form";
-import { sendUserInputs } from "../services/middleware";
 import {
   ShieldCheck,
   TrendingUp,
@@ -17,6 +16,7 @@ import {
 import { useTheme } from "next-themes";
 import Lottie from "lottie-react";
 import planLottie from "../assets/plan.json";
+import { getStratergy } from "../services/middleware";
 
 // --- FieldCard Component ---
 function FieldCard({ label, children, icon }) {
@@ -41,7 +41,9 @@ function FieldCard({ label, children, icon }) {
         }}
       >
         <div className="flex items-center gap-2 mb-1.5">
-          {icon && <span className="text-primary dark:text-[#b9a9fa]">{icon}</span>}
+          {icon && (
+            <span className="text-primary dark:text-[#b9a9fa]">{icon}</span>
+          )}
           <span className="block text-base font-bold text-primary dark:text-white tracking-tight drop-shadow-sm">
             {label}
           </span>
@@ -59,7 +61,7 @@ function TopBar() {
     <header className="flex items-center justify-between w-full px-6 py-4 absolute top-0 left-0 z-20 bg-transparent">
       <div className="flex items-center gap-2">
         <button
-          onClick={() => window.location.href = "/"}
+          onClick={() => (window.location.href = "/")}
           className="text-2xl font-black text-primary dark:text-white tracking-tight"
         >
           Money-Fi
@@ -91,10 +93,7 @@ function TopBar() {
               className="text-yellow-300 drop-shadow-[0_0_6px_rgba(250,217,136,0.44)]"
             />
           ) : (
-            <Moon
-              size={30}
-              className="text-primary"
-            />
+            <Moon size={30} className="text-primary" />
           )}
         </span>
       </Button>
@@ -134,20 +133,18 @@ const CalculatePage = () => {
     risk: "",
   });
 
-  const handleScreening = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      const finalFormData = { ...formData, objective, risk };
-      const response = await sendUserInputs(finalFormData);
-      if (response.status === "completed" || response.status === "success") {
-        localStorage.setItem("investment_recommendations", JSON.stringify(response));
-        localStorage.setItem("user_profile", JSON.stringify(finalFormData));
-        navigate("/recommendations", {
-          state: { recommendations: response, userProfile: finalFormData },
-        });
+      const finalformData = { ...formData, objective, risk };
+      const stratergyResponse = await getStratergy(finalformData);
+      if(stratergyResponse.status == 200) {
+        console.log(stratergyResponse.data);
+        navigate("/stratergy", { state: stratergyResponse.data });
       } else {
-        alert("Analysis failed. Please try again.");
+        alert("Failed to fetch strategy. Please try again.");
+        return;
       }
     } catch (error) {
       alert("An error occurred. Please try again.");
@@ -169,7 +166,6 @@ const CalculatePage = () => {
 
       {/* Glass card */}
       <div className="w-full max-w-2xl z-10 flex flex-col items-center justify-center gap-4 p-6 md:p-10 rounded-3xl bg-white/80 dark:bg-[#241e39]/95 backdrop-blur-xl border border-primary/15 dark:border-[#a789fa]/15 shadow-2xl relative">
-
         {/* Lottie animation */}
         <div className="w-48 h-48 md:w-72 md:h-72 mx-auto mb-1 mt-1 flex-shrink-0 overflow-hidden flex items-center justify-center">
           <Lottie
@@ -212,10 +208,12 @@ const CalculatePage = () => {
         </div>
 
         {/* Sexy glass fields */}
-        <Form onSubmit={handleScreening} className="w-full">
+        <Form onSubmit={handleSubmit} className="w-full">
           <div className="flex flex-col gap-7 w-full items-center md:items-start justify-center">
-
-            <FieldCard label="What is your objective?" icon={<PiggyBank size={20}/>}>
+            <FieldCard
+              label="What is your objective?"
+              icon={<PiggyBank size={20} />}
+            >
               <Select
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"
@@ -231,51 +229,57 @@ const CalculatePage = () => {
               </Select>
             </FieldCard>
 
-            <FieldCard label="How much can you invest monthly?" icon={<BarChart size={20}/>}>
-            <NumberInput
-              className="w-full mt-2 dark:text-white"
-              variant="bordered"
-              hideStepper
-              placeholder="10,000"
-              name="monthlyInvestment"
-              aria-label="Monthly Investment"
-              value={formData.monthlyInvestment}
-              min={0}
-              onChange={value => {
-                const numValue = Number(String(value).replace(/,/g, ""));
-                if (!isNaN(numValue) && numValue >= 0) {
-                  setFormData(prev => ({
-                    ...prev,
-                    monthlyInvestment: numValue
-                  }));
-                }
-              }}
-            />
-          </FieldCard>
+            <FieldCard
+              label="How much can you invest monthly?"
+              icon={<BarChart size={20} />}
+            >
+              <NumberInput
+                className="w-full mt-2 dark:text-white"
+                variant="bordered"
+                hideStepper
+                placeholder="10,000"
+                name="monthlyInvestment"
+                aria-label="Monthly Investment"
+                value={formData.monthlyInvestment}
+                min={0}
+                onChange={(value) => {
+                  const numValue = Number(String(value).replace(/,/g, ""));
+                  if (!isNaN(numValue) && numValue >= 0) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      monthlyInvestment: numValue,
+                    }));
+                  }
+                }}
+              />
+            </FieldCard>
 
-            <FieldCard label="What is your age?" icon={<User size={20}/>}>
-            <NumberInput
-              className="w-full mt-2 dark:text-white"
-              variant="bordered"
-              hideStepper
-              placeholder="25"
-              name="age"
-              aria-label="Age"
-              value={formData.age}
-              min={0}
-              onChange={value => {
-                const numValue = Number(String(value).replace(/,/g, ""));
-                if (!isNaN(numValue) && numValue >= 0) {
-                  setFormData(prev => ({
-                    ...prev,
-                    age: numValue
-                  }));
-                }
-              }}
-            />
-          </FieldCard>
+            <FieldCard label="What is your age?" icon={<User size={20} />}>
+              <NumberInput
+                className="w-full mt-2 dark:text-white"
+                variant="bordered"
+                hideStepper
+                placeholder="25"
+                name="age"
+                aria-label="Age"
+                value={formData.age}
+                min={0}
+                onChange={(value) => {
+                  const numValue = Number(String(value).replace(/,/g, ""));
+                  if (!isNaN(numValue) && numValue >= 0) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      age: numValue,
+                    }));
+                  }
+                }}
+              />
+            </FieldCard>
 
-            <FieldCard label="In how many years do you want to achieve your goal?" icon={<Calendar size={20}/>}>
+            <FieldCard
+              label="In how many years do you want to achieve your goal?"
+              icon={<Calendar size={20} />}
+            >
               <Slider
                 className="w-full mt-2 dark:text-white"
                 defaultValue={5}
@@ -286,14 +290,20 @@ const CalculatePage = () => {
                 maxValue={40}
                 minValue={1}
                 step={1}
-                onChange={value => setFormData(prev => ({ ...prev, yearsToAchieve: value }))}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, yearsToAchieve: value }))
+                }
               />
               <span className="text-sm text-primary dark:text-white font-semibold text-right mt-2 block">
-                {formData.yearsToAchieve} {formData.yearsToAchieve === 1 ? "year" : "years"}
+                {formData.yearsToAchieve}{" "}
+                {formData.yearsToAchieve === 1 ? "year" : "years"}
               </span>
             </FieldCard>
 
-            <FieldCard label="How much risk are you willing to take?" icon={<BarChart size={20}/>}>
+            <FieldCard
+              label="How much risk are you willing to take?"
+              icon={<BarChart size={20} />}
+            >
               <Select
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"

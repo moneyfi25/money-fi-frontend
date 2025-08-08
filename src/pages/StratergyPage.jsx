@@ -1,51 +1,21 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Alert } from "@heroui/react";
+import { getReportByType } from "../services/middleware";
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Example strategy data (replace with your real data)
-const strategies = [
-  {
-    name: "Balanced Growth",
-    description: "A balanced approach for moderate risk and steady growth.",
-    allocation: {
-      "Mutual Funds": 5000,
-      ETFs: 3000,
-      Bonds: 2000,
-    },
-    expectedReturn: "10-12%",
-    riskLevel: "Moderate",
-  },
-  {
-    name: "Aggressive Equity",
-    description: "Higher equity allocation for aggressive growth seekers.",
-    allocation: {
-      "Mutual Funds": 7000,
-      ETFs: 2500,
-      Bonds: 500,
-    },
-    expectedReturn: "13-16%",
-    riskLevel: "High",
-  },
-  {
-    name: "Conservative Income",
-    description:
-      "Focuses on capital preservation and steady income with minimal risk.",
-    allocation: {
-      "Mutual Funds": 2000,
-      ETFs: 1000,
-      Bonds: 7000,
-    },
-    expectedReturn: "6-8%",
-    riskLevel: "Low",
-  },
-];
-
 function getPieData(allocation) {
-  const labels = Object.keys(allocation);
-  const data = Object.values(allocation);
+  // Filter out percentage keys
+  const filtered = Object.entries(allocation).filter(
+    ([key]) => !key.endsWith("%")
+  );
+  const labels = filtered.map(([key]) => key);
+  const data = filtered.map(([, value]) => value);
   const colors = [
     "#6366F1", // Indigo
     "#10B981", // Emerald
@@ -75,6 +45,30 @@ const cardColors = [
 ];
 
 export default function StratergyPage() {
+  const location = useLocation();
+  const strategies = location.state?.strategy?.[0]?.strategies || [];
+
+  const navigate = useNavigate();
+
+  const handleClick = async (e, strategy) => {
+    e.preventDefault();
+    let type = location.state?.strategy?.[0]?.type || 32;
+    if (strategy.riskLevel == "Low") type = (type * 10) + 1;
+    else if (strategy.riskLevel == "Moderate") type = (type * 10) + 2;
+    else if (strategy.riskLevel == "High") type = (type * 10) + 3;
+
+    try {
+      const response = await getReportByType(type);
+      console.log(response.data.report)
+      navigate("/investment-report", {
+        state: { reportData: response.data.report },
+      });
+    } catch (error) {
+      alert("Failed to fetch report.");
+    }
+    
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-10 px-4">
       <div className="max-w-5xl mx-auto">
@@ -91,6 +85,7 @@ export default function StratergyPage() {
               className={`bg-gradient-to-br ${
                 cardColors[idx % cardColors.length]
               } rounded-2xl shadow-lg p-8 flex flex-col items-center hover:shadow-2xl transition-shadow duration-300`}
+              onClick={(e) => handleClick(e, strategy)}
             >
               <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
                 {strategy.name}
@@ -118,17 +113,19 @@ export default function StratergyPage() {
                 />
               </div>
               <div className="w-full grid grid-cols-3 gap-4 mt-2 mb-4">
-                {Object.entries(strategy.allocation).map(([asset, amount]) => (
-                  <div
-                    key={asset}
-                    className="bg-white rounded-xl shadow p-3 flex flex-col items-center"
-                  >
-                    <span className="text-sm text-gray-500">{asset}</span>
-                    <span className="text-lg font-bold text-indigo-600">
-                      ₹{amount.toLocaleString()}
-                    </span>
-                  </div>
-                ))}
+                {Object.entries(strategy.allocation)
+                  .filter(([key]) => !key.endsWith("%"))
+                  .map(([asset, amount]) => (
+                    <div
+                      key={asset}
+                      className="bg-white rounded-xl shadow p-3 flex flex-col items-center"
+                    >
+                      <span className="text-sm text-gray-500">{asset}</span>
+                      <span className="text-lg font-bold text-indigo-600">
+                        ₹{amount.toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
               </div>
               <div className="flex justify-between w-full mt-4">
                 <div>
@@ -147,6 +144,23 @@ export default function StratergyPage() {
                     {strategy.riskLevel}
                   </span>
                 </div>
+              </div>
+              <div className="w-full mt-4 flex flex-col items-center">
+                <span className="block text-xs text-gray-500">
+                  Projected Maturity Amount
+                </span>
+                <span className="block text-xl font-bold text-blue-700">
+                  {Array.isArray(strategy.maturityAmount)
+                    ? `₹${Number(
+                        strategy.maturityAmount[0]
+                      ).toLocaleString()} - ₹${Number(
+                        strategy.maturityAmount[1]
+                      ).toLocaleString()}`
+                    : strategy.maturityAmount !== undefined &&
+                      strategy.maturityAmount !== null
+                    ? `₹${Number(strategy.maturityAmount).toLocaleString()}`
+                    : "N/A"}
+                </span>
               </div>
             </div>
           ))}
