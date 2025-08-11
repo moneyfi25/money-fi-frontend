@@ -183,6 +183,156 @@ function MutualFundReturns({ mutualFunds }) {
         </p>
       </div>
 
+      {/* Quick Overview Table */}
+      <div className="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+          <h3 className="text-lg font-semibold text-white flex items-center">
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Fund Overview
+          </h3>
+          <p className="text-blue-100 text-sm mt-1">
+            Quick snapshot of your mutual fund portfolio
+          </p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <th className="px-6 py-4 text-left">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-xs font-bold text-blue-600">#</span>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Rank
+                    </span>
+                  </div>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-4 h-4 text-emerald-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" />
+                      </svg>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Fund Name
+                    </span>
+                  </div>
+                </th>
+                <th className="px-6 py-4 text-left">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-4 h-4 text-amber-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      5Y Return
+                    </span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {mutualFunds.map((f, i) => {
+                const returnValue =
+                  typeof f?.return_5y === "number"
+                    ? f.return_5y
+                    : f?.["5-Year Return"] != null
+                    ? Number(f["5-Year Return"])
+                    : 0;
+
+                const returnColor =
+                  returnValue >= 15
+                    ? "text-emerald-600 bg-emerald-50"
+                    : returnValue >= 10
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-amber-600 bg-amber-50";
+
+                return (
+                  <tr
+                    key={i}
+                    className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-200"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center shadow-md">
+                          <span className="text-sm font-bold text-white">
+                            {i + 1}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-2 h-8 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full"></div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900 leading-tight">
+                            {f?.name || f?.["Fund Name"] || "-"}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Equity Fund
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${returnColor} border`}
+                        >
+                          {returnValue > 0 && (
+                            <svg
+                              className="w-3 h-3 mr-1"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          )}
+                          {returnValue ? `${returnValue.toFixed(2)}%` : "-"}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="bg-gradient-to-r from-gray-50 to-blue-50 px-6 py-3">
+          <p className="text-xs text-gray-600 text-center">
+            💡 Higher returns indicate better fund performance over the 5-year
+            period
+          </p>
+        </div>
+      </div>
+
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Bar Chart */}

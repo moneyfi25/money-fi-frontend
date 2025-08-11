@@ -44,45 +44,6 @@ export default function InvestmentReportPage() {
 
       {/* Report Content - This div will be exported to PDF */}
       <div id="report" className="bg-white">
-        {/* Report Header for PDF */}
-        <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            Investment Portfolio Report
-          </h1>
-          <p className="text-gray-600">
-            Generated on:{" "}
-            {new Date().toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-          <div className="mt-4 grid grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-lg font-bold text-blue-600">
-                ₹
-                {Object.values(investmentData.allocations)
-                  .reduce((sum, val) => sum + val, 0)
-                  .toLocaleString()}
-              </p>
-              <p className="text-sm text-gray-600">Monthly Investment</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-emerald-600">
-                {Object.keys(investmentData.allocations).length}
-              </p>
-              <p className="text-sm text-gray-600">Asset Classes</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-purple-600">
-                {investmentData.mutual_funds.length +
-                  investmentData.etfs.length +
-                  investmentData.bonds.length}
-              </p>
-              <p className="text-sm text-gray-600">Total Securities</p>
-            </div>
-          </div>
-        </div>
 
         {/* Allocation Pie Chart */}
         <div className="mb-8">
