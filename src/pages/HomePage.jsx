@@ -1,61 +1,91 @@
 import React, { useState } from "react";
 import { Button } from "@heroui/button";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import { Typewriter } from "react-simple-typewriter";
 import { Sun, Moon, TrendingUp, ShieldCheck } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n";
 import LottieInvestment from "../components/LottieInvestment";
 
-function TopBar() {
-  const { theme, setTheme } = useTheme();
+// Small language switcher for the header
+function LanguageSwitch() {
+  const current = i18n.language?.startsWith("hi") ? "hi" : "en";
+
+  const change = (lng) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("moneyfi_lang", lng);
+    document.documentElement.setAttribute("lang", lng);
+  };
+
   return (
-    <header className="flex items-center justify-between w-full px-6 py-4 absolute top-0 left-0 z-20 bg-transparent">
-      <div className="flex items-center gap-2">
-      <button
-        onClick={() => window.location.href = "/"}
-        className="text-2xl font-bold text-primary dark:text-white tracking-tight"
-      > Money-Fi
-      </button>
-        <TrendingUp className="text-primary dark:text-primary-light" size={26} />
-      </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label="Toggle theme"
-        className={`
-          w-12 h-12 md:w-14 md:h-14
-          rounded-full
-          flex items-center justify-center
-          bg-white/60 dark:bg-primary-dark/50
-          border border-transparent
-          shadow-sm
-          hover:scale-105 hover:bg-primary/10 dark:hover:bg-primary-dark/80
-          hover:shadow-[0_0_10px_2px_rgba(124,58,237,0.08)]
-          backdrop-blur
-          transition-all duration-200
-        `}
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      >
-        <span className="relative flex items-center justify-center transition-all duration-200">
-          {theme === "dark" ? (
-            <Sun
-              size={28}
-              className="text-yellow-300 transition-all duration-200"
-            />
-          ) : (
-            <Moon
-              size={28}
-              className="text-primary transition-all duration-200"
-            />
-          )}
-        </span>
-      </Button>
-    </header>
+    <Dropdown>
+      <DropdownTrigger>
+        <Button
+          variant="ghost"
+          className="rounded-full h-10 px-4"
+          aria-label="Change language"
+        >
+          🌐 {current === "hi" ? "हिंदी" : "English"}
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu aria-label="Language" onAction={(key) => change(key)}>
+        <DropdownItem key="en">English</DropdownItem>
+        <DropdownItem key="hi">हिंदी</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
   );
 }
 
+// Theme toggle + brand
+function TopBar() {
+  const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
 
-
+  return (
+    <header className="flex items-center justify-between w-full px-6 py-4 absolute top-0 left-0 z-20 bg-transparent">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => (window.location.href = "/")}
+          className="text-2xl font-bold text-primary dark:text-white tracking-tight"
+        >
+          {t("brand")}
+        </button>
+        <TrendingUp className="text-primary dark:text-primary-light" size={26} />
+      </div>
+      <div className="flex items-center gap-2">
+        <LanguageSwitch />
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Toggle theme"
+          className={`
+            w-12 h-12 md:w-14 md:h-14
+            rounded-full
+            flex items-center justify-center
+            bg-white/60 dark:bg-primary-dark/50
+            border border-transparent
+            shadow-sm
+            hover:scale-105 hover:bg-primary/10 dark:hover:bg-primary-dark/80
+            hover:shadow-[0_0_10px_2px_rgba(124,58,237,0.08)]
+            backdrop-blur
+            transition-all duration-200
+          `}
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          <span className="relative flex items-center justify-center transition-all duration-200">
+            {theme === "dark" ? (
+              <Sun size={28} className="text-yellow-300 transition-all duration-200" />
+            ) : (
+              <Moon size={28} className="text-primary transition-all duration-200" />
+            )}
+          </span>
+        </Button>
+      </div>
+    </header>
+  );
+}
 
 const WaveDivider = () => (
   <svg viewBox="0 0 1440 320" className="absolute bottom-0 left-0 w-full h-24 z-10 opacity-70">
@@ -67,11 +97,12 @@ const WaveDivider = () => (
   </svg>
 );
 
-const WORDS = ["Welcome to Money-fi", "Smart Investing Starts Here!"];
-
 const HomePage = () => {
   const navigate = useNavigate();
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const { t } = useTranslation();
+
+  const [/*currentIndex*/, setCurrentIndex] = useState(0);
+  const words = [t("homepage_title_1"), t("homepage_title_2")];
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-primary-light via-white to-primary/10 dark:from-primary-dark dark:via-primary/40 dark:to-primary-dark transition-colors duration-500 overflow-x-hidden flex flex-col items-center">
@@ -90,15 +121,14 @@ const HomePage = () => {
           {/* Animated shimmer highlight */}
           <span className="pointer-events-none absolute -top-8 left-1/3 w-2/3 h-20 bg-gradient-to-r from-primary/30 via-white/50 to-primary-light/0 blur-2xl opacity-60 animate-pulse group-hover:scale-110 transition-transform"></span>
 
-          {/* Headline with dynamic font size */}
+          {/* Headline */}
           <div className="relative w-full">
             <h1
-              className={`font-black text-center text-primary dark:text-white leading-tight tracking-tight drop-shadow-sm transition-all duration-300
-                ${currentIndex === 1 ? "text-2xl md:text-4xl" : "text-3xl md:text-5xl"}`}
-              style={{ minHeight: "2.5em" }} // Reserve space for both lines
+              className="font-black text-center text-primary dark:text-white leading-tight tracking-tight drop-shadow-sm transition-all duration-300 text-3xl md:text-5xl"
+              style={{ minHeight: "2.6em" }}
             >
               <Typewriter
-                words={WORDS}
+                words={words}
                 loop={0}
                 cursor
                 cursorStyle="|"
@@ -119,14 +149,13 @@ const HomePage = () => {
           <div className="flex flex-row items-center justify-center gap-3">
             <ShieldCheck className="text-primary dark:text-white" size={28} />
             <span className="text-lg md:text-2xl font-semibold text-primary dark:text-white">
-              Safe. Simple. For You.
+              {t("tagline")}
             </span>
           </div>
 
           {/* Subtitle */}
           <p className="text-base md:text-lg text-zinc-700 dark:text-primary-light/90 text-center font-medium">
-            Trusted by many users to achieve their <span className="font-semibold text-primary dark:text-primary-light">goals</span>.
-            Get personalized mutual fund advice and more.
+            {t("trusted_line_1")}
           </p>
 
           {/* Main CTA */}
@@ -136,7 +165,7 @@ const HomePage = () => {
             onPress={() => navigate("/calculate")}
           >
             <span className="flex items-center gap-2">
-              Start Investing
+              {t("homepage_cta")}
               <TrendingUp size={22} />
             </span>
           </Button>
@@ -151,12 +180,16 @@ const HomePage = () => {
         <div className="flex flex-col md:flex-row items-center justify-center gap-4">
           <div className="flex items-center gap-2 mx-auto">
             <ShieldCheck size={20} className="text-green-500" />
-            <span className="font-medium text-zinc-600 dark:text-primary-light">Personalized Advice, Backed by Regulations</span>
+            <span className="font-medium text-zinc-600 dark:text-primary-light">
+              {t("trusted_line_1")}
+            </span>
           </div>
           <div className="hidden md:block w-px h-6 bg-primary/10"></div>
           <div className="flex items-center gap-2 mx-auto">
             <TrendingUp size={20} className="text-violet-600" />
-            <span className="font-medium text-zinc-600 dark:text-primary-light">Tons of Advised Investments</span>
+            <span className="font-medium text-zinc-600 dark:text-primary-light">
+              {t("trusted_line_2")}
+            </span>
           </div>
         </div>
       </section>
