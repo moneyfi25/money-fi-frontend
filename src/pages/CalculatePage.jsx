@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import { Button } from "@heroui/button";
+import {
+  NumberInput,
+  Slider,
+  Select,
+  SelectItem,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/react";
 import { useNavigate } from "react-router-dom";
-import { NumberInput, Slider, Select, SelectItem } from "@heroui/react";
 import { Form } from "@heroui/form";
 import {
   ShieldCheck,
@@ -17,8 +26,38 @@ import { useTheme } from "next-themes";
 import Lottie from "lottie-react";
 import planLottie from "../assets/plan.json";
 import { getStratergy } from "../services/middleware";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n";
 
-// --- FieldCard Component ---
+/* ---------- Header Language Switch (Dropdown) ---------- */
+function LanguageSwitch() {
+  const current = i18n.language?.startsWith("hi") ? "hi" : "en";
+  const change = (lng) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("moneyfi_lang", lng);
+    document.documentElement.setAttribute("lang", lng);
+  };
+
+  return (
+    <Dropdown>
+      <DropdownTrigger>
+        <Button
+          variant="ghost"
+          className="rounded-full h-10 px-4"
+          aria-label="Change language"
+        >
+          🌐 {current === "hi" ? "हिंदी" : "English"}
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu aria-label="Language" onAction={(key) => change(key)}>
+        <DropdownItem key="en">English</DropdownItem>
+        <DropdownItem key="hi">हिंदी</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+  );
+}
+
+/* ---------- Field Card ---------- */
 function FieldCard({ label, children, icon }) {
   return (
     <div className="w-full group">
@@ -54,9 +93,10 @@ function FieldCard({ label, children, icon }) {
   );
 }
 
-// --- TopBar ---
+/* ---------- Top Bar ---------- */
 function TopBar() {
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
   return (
     <header className="flex items-center justify-between w-full px-6 py-4 absolute top-0 left-0 z-20 bg-transparent">
       <div className="flex items-center gap-2">
@@ -64,43 +104,47 @@ function TopBar() {
           onClick={() => (window.location.href = "/")}
           className="text-2xl font-black text-primary dark:text-white tracking-tight"
         >
-          Money-Fi
+          {t("brand")}
         </button>
         <TrendingUp className="text-primary dark:text-[#b9a9fa]" size={26} />
       </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label="Toggle theme"
-        className={`
-          w-12 h-12 md:w-14 md:h-14
-          rounded-full
-          flex items-center justify-center
-          bg-white/70 dark:bg-[#2c1e52]/80
-          border border-transparent
-          shadow
-          hover:scale-110 hover:bg-primary/10 dark:hover:bg-[#38276c]/80
-          hover:shadow-[0_0_16px_4px_rgba(124,58,237,0.11)]
-          backdrop-blur
-          transition-all duration-200
-        `}
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      >
-        <span className="relative flex items-center justify-center transition-all duration-200">
-          {theme === "dark" ? (
-            <Sun
-              size={32}
-              className="text-yellow-300 drop-shadow-[0_0_6px_rgba(250,217,136,0.44)]"
-            />
-          ) : (
-            <Moon size={30} className="text-primary" />
-          )}
-        </span>
-      </Button>
+      <div className="flex items-center gap-2">
+        <LanguageSwitch />
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Toggle theme"
+          className={`
+            w-12 h-12 md:w-14 md:h-14
+            rounded-full
+            flex items-center justify-center
+            bg-white/70 dark:bg-[#2c1e52]/80
+            border border-transparent
+            shadow
+            hover:scale-110 hover:bg-primary/10 dark:hover:bg-[#38276c]/80
+            hover:shadow-[0_0_16px_4px_rgba(124,58,237,0.11)]
+            backdrop-blur
+            transition-all duration-200
+          `}
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          <span className="relative flex items-center justify-center transition-all duration-200">
+            {theme === "dark" ? (
+              <Sun
+                size={32}
+                className="text-yellow-300 drop-shadow-[0_0_6px_rgba(250,217,136,0.44)]"
+              />
+            ) : (
+              <Moon size={30} className="text-primary" />
+            )}
+          </span>
+        </Button>
+      </div>
     </header>
   );
 }
 
+/* ---------- Options ---------- */
 export const riskOptions = [
   { key: "Conservative", label: "Conservative" },
   { key: "Moderate", label: "Moderate" },
@@ -120,8 +164,11 @@ export const objectiveOptions = [
   { key: "Other", label: "Other" },
 ];
 
+/* ---------- Page ---------- */
 const CalculatePage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   const [objective, setObjective] = useState("");
   const [risk, setRisk] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -139,8 +186,7 @@ const CalculatePage = () => {
       setIsLoading(true);
       const finalformData = { ...formData, objective, risk };
       const stratergyResponse = await getStratergy(finalformData);
-      if(stratergyResponse.status == 200) {
-        console.log(stratergyResponse.data);
+      if (stratergyResponse.status === 200) {
         navigate("/stratergy", { state: stratergyResponse.data });
       } else {
         alert("Failed to fetch strategy. Please try again.");
@@ -182,7 +228,7 @@ const CalculatePage = () => {
           />
         </div>
 
-        {/* Headline + glowing accent bar */}
+        {/* Headline + bar */}
         <div className="w-full flex flex-col items-center gap-2 mb-4 mt-0">
           <div
             className="
@@ -200,26 +246,23 @@ const CalculatePage = () => {
             }}
           />
           <h1 className="text-2xl md:text-4xl font-extrabold text-primary dark:text-white tracking-tight text-center drop-shadow-[0_2px_8px_rgba(124,58,237,0.10)]">
-            Plan Your Investment
+            {t("calc_title")}
           </h1>
           <p className="text-base md:text-lg text-zinc-700 dark:text-white text-center font-medium">
-            Personalized advice to reach your financial goals faster.
+            {t("calc_subtitle")}
           </p>
         </div>
 
-        {/* Sexy glass fields */}
+        {/* Fields */}
         <Form onSubmit={handleSubmit} className="w-full">
           <div className="flex flex-col gap-7 w-full items-center md:items-start justify-center">
-            <FieldCard
-              label="What is your objective?"
-              icon={<PiggyBank size={20} />}
-            >
+            <FieldCard label={t("field_objective")} icon={<PiggyBank size={20} />}>
               <Select
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"
-                placeholder="Select Objective"
+                placeholder={t("field_objective")}
                 name="objective"
-                aria-label="Objective"
+                aria-label={t("field_objective")}
                 selectedKeys={objective}
                 onSelectionChange={setObjective}
               >
@@ -229,17 +272,14 @@ const CalculatePage = () => {
               </Select>
             </FieldCard>
 
-            <FieldCard
-              label="How much can you invest monthly?"
-              icon={<BarChart size={20} />}
-            >
+            <FieldCard label={t("field_monthly")} icon={<BarChart size={20} />}>
               <NumberInput
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"
                 hideStepper
                 placeholder="10,000"
                 name="monthlyInvestment"
-                aria-label="Monthly Investment"
+                aria-label={t("field_monthly")}
                 value={formData.monthlyInvestment}
                 min={0}
                 onChange={(value) => {
@@ -254,14 +294,14 @@ const CalculatePage = () => {
               />
             </FieldCard>
 
-            <FieldCard label="What is your age?" icon={<User size={20} />}>
+            <FieldCard label={t("field_age")} icon={<User size={20} />}>
               <NumberInput
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"
                 hideStepper
                 placeholder="25"
                 name="age"
-                aria-label="Age"
+                aria-label={t("field_age")}
                 value={formData.age}
                 min={0}
                 onChange={(value) => {
@@ -276,17 +316,14 @@ const CalculatePage = () => {
               />
             </FieldCard>
 
-            <FieldCard
-              label="In how many years do you want to achieve your goal?"
-              icon={<Calendar size={20} />}
-            >
+            <FieldCard label={t("field_horizon")} icon={<Calendar size={20} />}>
               <Slider
                 className="w-full mt-2 dark:text-white"
                 defaultValue={5}
                 value={formData.yearsToAchieve}
                 label="Years"
                 name="yearsToAchieve"
-                aria-label="Years to Achieve"
+                aria-label={t("field_horizon")}
                 maxValue={40}
                 minValue={1}
                 step={1}
@@ -300,16 +337,13 @@ const CalculatePage = () => {
               </span>
             </FieldCard>
 
-            <FieldCard
-              label="How much risk are you willing to take?"
-              icon={<BarChart size={20} />}
-            >
+            <FieldCard label={t("field_risk")} icon={<BarChart size={20} />}>
               <Select
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"
-                placeholder="Select Risk Level"
+                placeholder={t("field_risk")}
                 name="risk"
-                aria-label="Risk Level"
+                aria-label={t("field_risk")}
                 selectedKeys={risk}
                 onSelectionChange={setRisk}
               >
@@ -319,7 +353,7 @@ const CalculatePage = () => {
               </Select>
             </FieldCard>
 
-            {/* SUBMIT */}
+            {/* Submit */}
             <div className="w-full flex justify-center mt-4">
               <Button
                 color="primary"
@@ -328,7 +362,7 @@ const CalculatePage = () => {
                 isLoading={isLoading}
                 disabled={isLoading}
               >
-                {isLoading ? "Analyzing..." : "Show My Plan"}
+                {isLoading ? "Analyzing..." : t("btn_show_plan")}
               </Button>
             </div>
           </div>
@@ -337,7 +371,7 @@ const CalculatePage = () => {
         {/* Trust message */}
         <div className="w-full mt-7 flex items-center justify-center gap-2 text-sm text-zinc-500 dark:text-white">
           <ShieldCheck size={17} className="text-green-500" />
-          <span>Your information stays private and secure.</span>
+          <span>{t("privacy_line")}</span>
         </div>
       </div>
     </div>
