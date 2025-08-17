@@ -383,21 +383,6 @@ function MutualFundReturns({ mutualFunds }) {
         </div>
       </div>
 
-      {/* Radar Chart - Full Width */}
-      <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-4 md:p-6 hover:shadow-md transition-shadow duration-200">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Expense Ratio Comparison
-          </h3>
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-        </div>
-        <div className="h-64 md:h-96 flex justify-center">
-          <div className="w-full max-w-md">
-            <Radar data={radarData} options={radarOptions} />
-          </div>
-        </div>
-      </div>
-
       {/* Summary Statistics */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 md:p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
