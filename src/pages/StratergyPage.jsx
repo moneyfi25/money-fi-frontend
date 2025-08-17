@@ -38,7 +38,23 @@ const PALETTE = [
   "#FB7185",
 ];
 
-const formatINR = (n) => `₹${Number(n ?? 0).toLocaleString()}`;
+// Parse values like "Rs. 140,300", "₹140,300", "140,300", numbers, etc.
+const parseAmount = (val) => {
+  if (typeof val === "number" && isFinite(val)) return val;
+  if (typeof val === "string") {
+    const cleaned = val
+      .replace(/₹/g, "")
+      .replace(/Rs\.?/gi, "")
+      .replace(/,/g, "")
+      .trim();
+    const num = parseFloat(cleaned);
+    return Number.isFinite(num) ? num : 0;
+  }
+  return 0;
+};
+
+// Replace the old formatter to handle strings too
+const formatINR = (n) => `₹${parseAmount(n).toLocaleString("en-IN")}`;
 
 const sumVals = (obj = {}) =>
   Object.values(obj).reduce((s, v) => s + Number(v || 0), 0);
@@ -166,7 +182,7 @@ export default function StratergyPage() {
       </div>
 
       {/* Comparison hero (uses first strategy to seed chart) */}
-      <div className="py-8 px-4 bg-gradient-to-b from-purple-50 to-white">
+      {/* <div className="py-8 px-4 bg-gradient-to-b from-purple-50 to-white">
         <div className="max-w-6xl mx-auto">
           {(() => {
             const first = strategies[0] || {};
@@ -205,7 +221,7 @@ export default function StratergyPage() {
             );
           })()}
         </div>
-      </div>
+      </div> */}
 
       {/* Strategies grid */}
       <div className="py-12 px-4">
@@ -242,10 +258,9 @@ export default function StratergyPage() {
                   : [];
 
               const m = strategy?.maturityAmount || {};
-              const lumpsumFV = m.lumpsum_FV ?? m.lumpsumFV;
-              const monthlyFV = m.monthly_FV ?? m.monthlyFV;
-              const totalFV =
-                m.total_FV ?? m.totalFV ?? strategy.maturityAmount;
+              const TotalInvested = m.TotalInvested;
+              const Returns = m.Returns;
+              const MaturityAmount = m.MaturityAmount;
 
               return (
                 <div
@@ -267,17 +282,52 @@ export default function StratergyPage() {
                   </div>
 
                   {/* badges */}
-                  <div className="relative flex justify-between items-start mb-6">
-                    <span
-                      className={`px-3 py-1.5 rounded-full text-xs font-bold ${riskPillClass(
-                        strategy.riskLevel
-                      )} shadow-sm`}
-                    >
-                      {strategy.riskLevel} Risk
-                    </span>
-                    <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-indigo-100 to-indigo-200 text-indigo-800 border border-indigo-300 shadow-sm">
-                      {strategy.expectedReturn}
-                    </span>
+                  <div className="relative mb-6">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                      {/* Risk badge (big) */}
+                      <div
+                        className={`flex items-center gap-3 ${riskPillClass(
+                          strategy.riskLevel
+                        )} rounded-2xl px-4 py-3 shadow-md`}
+                      >
+                        <svg
+                          className="w-6 h-6 opacity-80"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path d="M12 2l7 4v6c0 5-3.8 9.7-7 10-3.2-.3-7-5-7-10V6l7-4z" />
+                        </svg>
+                        <div className="leading-tight">
+                          <div className="text-[11px] uppercase font-semibold opacity-80">
+                            Risk Level
+                          </div>
+                          <div className="text-xl sm:text-2xl font-extrabold">
+                            {strategy.riskLevel}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Expected return badge (big) */}
+                      <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-100 to-indigo-200 text-indigo-900 border border-indigo-300 rounded-2xl px-4 py-3 shadow-md">
+                        <svg
+                          className="w-6 h-6 text-indigo-700"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path d="M3 12l4-4 4 4 6-6 4 4-10 10L3 12z" />
+                        </svg>
+                        <div className="leading-tight">
+                          <div className="text-[11px] uppercase font-semibold opacity-80">
+                            Expected Return
+                          </div>
+                          <div className="text-xl sm:text-2xl font-extrabold">
+                            {strategy.expectedReturn}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* info */}
@@ -436,26 +486,26 @@ export default function StratergyPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="bg-white/80 rounded-xl border border-gray-100 p-3 text-center">
                         <span className="block text-xs text-gray-500 font-medium mb-1">
-                          Lumpsum FV
+                          Total Invested
                         </span>
                         <span className="block text-base font-extrabold text-blue-700">
-                          {formatINR(lumpsumFV)}
+                          {formatINR(TotalInvested)}
                         </span>
                       </div>
                       <div className="bg-white/80 rounded-xl border border-gray-100 p-3 text-center">
                         <span className="block text-xs text-gray-500 font-medium mb-1">
-                          Monthly FV
+                          Returns
                         </span>
                         <span className="block text-base font-extrabold text-blue-700">
-                          {formatINR(monthlyFV)}
+                          {formatINR(Returns)}
                         </span>
                       </div>
                       <div className="bg-white/80 rounded-xl border border-gray-100 p-3 text-center">
                         <span className="block text-xs text-gray-500 font-medium mb-1">
-                          Total FV
+                          Maturity Amount
                         </span>
                         <span className="block text-base font-extrabold text-blue-700">
-                          {formatINR(totalFV)}
+                          {formatINR(MaturityAmount)}
                         </span>
                       </div>
                     </div>
