@@ -10,6 +10,7 @@
   "calc_subtitle": "Personalized advice to reach your financial goals faster.",
   "field_objective": "What is your objective?",
   "field_monthly": "How much can you invest monthly?",
+  "field_lumpsum": "How much initial investment can you make?",
   "field_age": "What is your age?",
   "field_horizon": "In how many years do you want to achieve your goal?",
   "field_risk": "How much risk are you willing to take?",
