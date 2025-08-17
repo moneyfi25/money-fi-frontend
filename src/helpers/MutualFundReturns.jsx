@@ -1,10 +1,9 @@
 import React from "react";
-import { Bar, Pie, Radar } from "react-chartjs-2";
+import { Bar, Scatter, Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   BarElement,
-  ArcElement,
-  RadarController,
+  ScatterController,
   CategoryScale,
   LinearScale,
   RadialLinearScale,
@@ -17,8 +16,7 @@ import {
 // Register required components
 ChartJS.register(
   BarElement,
-  ArcElement,
-  RadarController,
+  ScatterController,
   CategoryScale,
   LinearScale,
   RadialLinearScale,
@@ -44,26 +42,22 @@ function MutualFundReturns({ mutualFunds }) {
     ],
   };
 
-  // Data for Pie Chart (Equal allocation for visualization)
-  const pieData = {
-    labels: mutualFunds.map((f) => f.name.split(" ").slice(0, 2).join(" ")),
-    datasets: [
-      {
-        data: new Array(mutualFunds.length).fill(1), // Equal allocation
-        backgroundColor: [
-          "#10B981", // Emerald
-          "#3B82F6", // Blue
-          "#F59E0B", // Amber
-          "#EF4444", // Red
-          "#8B5CF6", // Violet
-          "#06B6D4", // Cyan
-          "#84CC16", // Lime
-        ],
-        borderWidth: 2,
-        borderColor: "#ffffff",
-        hoverOffset: 8,
-      },
-    ],
+  // Data for Scatter Chart (Risk vs Returns)
+  const scatterData = {
+    datasets: mutualFunds.map((f, index) => ({
+      label: f.name || `Fund ${index + 1}`, // Use fund name or fallback to "Fund X"
+      data: [
+        {
+          x: f.key_metrics?.["Sharpe Ratio"] || Math.random() * 10, // Extract Sharpe Ratio
+          y: f.return_5y || 0, // Extract 5-Year CAGR
+        },
+      ],
+      backgroundColor: `hsl(${index * 50}, 70%, 50%)`, // Generate unique color for each fund
+      borderColor: `hsl(${index * 50}, 70%, 40%)`,
+      borderWidth: 1,
+      pointRadius: 6,
+      pointHoverRadius: 8,
+    })),
   };
 
   // Data for Radar Chart (Expense Ratios)
@@ -109,7 +103,34 @@ function MutualFundReturns({ mutualFunds }) {
       },
     },
   };
-
+  const scatterOptions = {
+    ...chartOptions,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Risk Level",
+          font: { size: 12, family: "'Inter', sans-serif" },
+        },
+        ticks: {
+          font: { size: 11, family: "'Inter', sans-serif" },
+        },
+        grid: { color: "rgba(0, 0, 0, 0.1)" },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "5-Year Return (%)",
+          font: { size: 12, family: "'Inter', sans-serif" },
+        },
+        ticks: {
+          callback: (value) => `${value}%`,
+          font: { size: 11, family: "'Inter', sans-serif" },
+        },
+        grid: { color: "rgba(0, 0, 0, 0.1)" },
+      },
+    },
+  };
   const barOptions = {
     ...chartOptions,
     scales: {
@@ -348,16 +369,16 @@ function MutualFundReturns({ mutualFunds }) {
           </div>
         </div>
 
-        {/* Pie Chart */}
+        {/* Scatter Chart */}
         <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-4 md:p-6 hover:shadow-md transition-shadow duration-200">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-800">
-              Fund Distribution
+              Risk vs Returns Distribution
             </h3>
             <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
           </div>
           <div className="h-64 md:h-80">
-            <Pie data={pieData} options={chartOptions} />
+            <Scatter data={scatterData} options={scatterOptions} />
           </div>
         </div>
       </div>

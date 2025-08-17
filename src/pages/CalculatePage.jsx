@@ -174,6 +174,7 @@ const CalculatePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     monthlyInvestment: 10000,
+    lumpsumInvestment: 10000,
     yearsToAchieve: 5,
     age: 25,
     objective: "",
@@ -186,6 +187,7 @@ const CalculatePage = () => {
       setIsLoading(true);
       const finalformData = { ...formData, objective, risk };
       const stratergyResponse = await getStratergy(finalformData);
+      console.log(stratergyResponse.data);
       if (stratergyResponse.status === 200) {
         navigate("/stratergy", { state: stratergyResponse.data });
       } else {
@@ -256,7 +258,7 @@ const CalculatePage = () => {
         {/* Fields */}
         <Form onSubmit={handleSubmit} className="w-full">
           <div className="flex flex-col gap-7 w-full items-center md:items-start justify-center">
-            <FieldCard label={t("field_objective")} icon={<PiggyBank size={20} />}>
+            {/* <FieldCard label={t("field_objective")} icon={<PiggyBank size={20} />}>
               <Select
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"
@@ -270,8 +272,28 @@ const CalculatePage = () => {
                   <SelectItem key={option.key}>{option.label}</SelectItem>
                 ))}
               </Select>
+            </FieldCard> */}
+            <FieldCard label={t("field_lumpsum")} icon={<BarChart size={20} />}>
+              <NumberInput
+                className="w-full mt-2 dark:text-white"
+                variant="bordered"
+                hideStepper
+                placeholder="10,000"
+                name="lumpsumInvestment"
+                aria-label={t("field_lumpsum")}
+                value={formData.lumpsumInvestment}
+                min={0}
+                onChange={(value) => {
+                  const numValue = Number(String(value).replace(/,/g, ""));
+                  if (!isNaN(numValue) && numValue >= 0) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      lumpsumInvestment: numValue,
+                    }));
+                  }
+                }}
+              />
             </FieldCard>
-
             <FieldCard label={t("field_monthly")} icon={<BarChart size={20} />}>
               <NumberInput
                 className="w-full mt-2 dark:text-white"
@@ -294,7 +316,7 @@ const CalculatePage = () => {
               />
             </FieldCard>
 
-            <FieldCard label={t("field_age")} icon={<User size={20} />}>
+            {/* <FieldCard label={t("field_age")} icon={<User size={20} />}>
               <NumberInput
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"
@@ -314,7 +336,7 @@ const CalculatePage = () => {
                   }
                 }}
               />
-            </FieldCard>
+            </FieldCard> */}
 
             <FieldCard label={t("field_horizon")} icon={<Calendar size={20} />}>
               <Slider
@@ -337,7 +359,7 @@ const CalculatePage = () => {
               </span>
             </FieldCard>
 
-            <FieldCard label={t("field_risk")} icon={<BarChart size={20} />}>
+            {/* <FieldCard label={t("field_risk")} icon={<BarChart size={20} />}>
               <Select
                 className="w-full mt-2 dark:text-white"
                 variant="bordered"
@@ -351,7 +373,7 @@ const CalculatePage = () => {
                   <SelectItem key={option.key}>{option.label}</SelectItem>
                 ))}
               </Select>
-            </FieldCard>
+            </FieldCard> */}
 
             {/* Submit */}
             <div className="w-full flex justify-center mt-4">
