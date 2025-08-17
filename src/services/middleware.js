@@ -17,8 +17,8 @@ export const getReportByType = async (type, computedAllocation) => {
 };
 
 // const API_BASE_URL = "https://money-fi-9702ab6d8daf.herokuapp.com";
-const API_BASE_URL = "http://127.0.0.1:5000";
-// const API_BASE_URL = "https://moneyfi.onrender.com";
+// const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL = "https://moneyfi.onrender.com";
 
 export const sendUserInputs = async (userInputs) => {
   try {
