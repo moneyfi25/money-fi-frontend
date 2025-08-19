@@ -12,6 +12,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { getMutualFundDetails } from "../services/middleware";
+import { useNavigate } from "react-router-dom";
 
 // Register required components
 ChartJS.register(
@@ -27,6 +29,15 @@ ChartJS.register(
 );
 
 function MutualFundReturns({ mutualFunds }) {
+  const navigate = useNavigate();
+  const handleFundClick = async (fund) => {
+    try {
+      const encodedName = encodeURIComponent(fund.name);
+      navigate(`/fund-details/${encodedName}`);
+    } catch (err) {
+      alert("Failed to fetch fund details.");
+    }
+  };
   // Data for Bar Chart (5-Year Returns)
   const barData = {
     labels: mutualFunds.map((f) => f.name.split(" ").slice(0, 3).join(" ")), // Truncate long names
@@ -308,9 +319,12 @@ function MutualFundReturns({ mutualFunds }) {
                       <div className="flex items-center space-x-3">
                         <div className="w-2 h-8 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full"></div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-900 leading-tight">
+                          <button
+                            className="text-sm font-semibold text-blue-700 hover:underline hover:text-blue-900 transition-colors"
+                            onClick={() => handleFundClick(f)}
+                          >
                             {f?.name || f?.["Fund Name"] || "-"}
-                          </p>
+                          </button>
                           <p className="text-xs text-gray-500 mt-1">
                             Equity Fund
                           </p>

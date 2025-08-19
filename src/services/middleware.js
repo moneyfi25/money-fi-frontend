@@ -16,6 +16,10 @@ export const getReportByType = async (type, computedAllocation) => {
   });
 };
 
+export const getMutualFundDetails = async (fund_name) => {
+  return await api.get(`/api/mutual_funds/${fund_name}`);
+};
+
 // const API_BASE_URL = "https://money-fi-9702ab6d8daf.herokuapp.com";
 // const API_BASE_URL = "http://127.0.0.1:5000";
 const API_BASE_URL = "https://moneyfi.onrender.com";

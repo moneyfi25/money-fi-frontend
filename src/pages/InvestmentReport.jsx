@@ -74,7 +74,7 @@ export default function InvestmentReportPage() {
             Comprehensive analysis of your recommended investments
           </p>
         </div>
-        <ExportToPDF targetId="report" filename="investment-portfolio-report" />
+        {/* <ExportToPDF targetId="report" filename="investment-portfolio-report" /> */}
       </div>
 
       {/* Report Content */}
